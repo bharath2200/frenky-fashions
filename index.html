@@ -16,37 +16,36 @@
   <div class="header-right">
     <button id="theme-toggle" title="Toggle Dark/Light">🌓</button>
     <a href="#" class="header-link">Account</a>
-    <a href="#" class="header-link">Cart</a>
+    <a href="#" id="cart-button" class="header-link">Cart (<span id="cart-count">0</span>)</a>
   </div>
 </header>
 
 <nav>
-  <ul>
-    <li><a href="#">Mens Shirts</a></li>
-    <li><a href="#">T-Shirts</a></li>
-    <li><a href="#">Track Pants</a></li>
-    <li><a href="#">Baggy Jeans</a></li>
-    <li><a href="#">New Arrivals</a></li>
+  <ul id="category-menu">
+    <li><a href="#" data-category="all">All</a></li>
+    <li><a href="#" data-category="Mens Shirts">Mens Shirts</a></li>
+    <li><a href="#" data-category="T-Shirts">T-Shirts</a></li>
+    <li><a href="#" data-category="Track Pants">Track Pants</a></li>
+    <li><a href="#" data-category="Baggy Jeans">Baggy Jeans</a></li>
+    <li><a href="#" data-category="New Arrivals">New Arrivals</a></li>
   </ul>
+  <input type="text" id="search-bar" placeholder="Search products...">
 </nav>
 
 <main>
-  <section class="product-grid">
-    <div class="product-card">
-      <img src="assets/product1.jpg" alt="Product 1">
-      <h3>Classic White Shirt</h3>
-      <p>₹999</p>
-      <button>Add to Cart</button>
-    </div>
-    <div class="product-card">
-      <img src="assets/product2.jpg" alt="Product 2">
-      <h3>Black Oversized Tee</h3>
-      <p>₹799</p>
-      <button>Add to Cart</button>
-    </div>
-    <!-- Add more products here -->
+  <section class="product-grid" id="product-grid">
+    <!-- Products will be loaded dynamically -->
   </section>
 </main>
+
+<!-- Popup Cart -->
+<div id="cart-popup" class="cart-popup">
+  <div class="cart-content">
+    <h2>Your Cart</h2>
+    <ul id="cart-items"></ul>
+    <button id="close-cart">Close</button>
+  </div>
+</div>
 
 <footer>
   <p>© 2025 FRENKY FASHIONS — All Rights Reserved</p>
