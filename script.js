@@ -2,124 +2,118 @@ let products = [];
 let cart = [];
 
 // Load products from JSON
-fetch("products.json")
+fetch('products.json')
   .then(res => res.json())
   .then(data => {
     products = data;
     displayProducts(products);
-    loadCart();
   });
 
-const productList = document.getElementById("product-list");
-const searchBox = document.getElementById("search-box");
-const sortSelect = document.getElementById("sort-products");
+// Theme toggle
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  document.body.classList.toggle('light');
+});
 
 // Display products
 function displayProducts(items) {
-  productList.innerHTML = "";
-  items.forEach((p, index) => {
-    const card = document.createElement("div");
-    card.className = "product-card";
+  const list = document.getElementById('product-list');
+  list.innerHTML = '';
+  items.forEach((product, index) => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
     card.innerHTML = `
-      <img src="${p.image}" alt="${p.name}">
-      <h3>${p.name}</h3>
-      <p>₹${p.price}</p>
+      <img src="${product.image}" alt="${product.name}">
+      <h3>${product.name}</h3>
+      <p>₹${product.price}</p>
       <button onclick="addToCart(${index})">Add to Cart</button>
     `;
-    productList.appendChild(card);
+    list.appendChild(card);
   });
 }
 
-// Search filter
-searchBox.addEventListener("input", () => {
-  filterProducts();
+// Add to cart
+function addToCart(index) {
+  cart.push(products[index]);
+  document.getElementById('cart-count').textContent = cart.length;
+}
+
+// Cart popup
+document.getElementById('cart-button').addEventListener('click', () => {
+  showCart();
 });
 
-// Category filter
-document.querySelectorAll(".filter-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
+function showCart() {
+  const overlay = document.createElement('div');
+  overlay.className = 'cart-overlay';
+  
+  const popup = document.createElement('div');
+  popup.className = 'cart-popup';
+
+  popup.innerHTML = `
+    <h2>Your Cart</h2>
+    ${cart.length === 0 
+      ? '<p>Cart is empty</p>'
+      : cart.map((item, i) => `
+          <div class="cart-item">
+            <span>${item.name} - ₹${item.price}</span>
+            <button onclick="removeFromCart(${i}); closeCartPopup()">Remove</button>
+          </div>
+        `).join('')
+    }
+    <button id="close-cart">Close</button>
+  `;
+  
+  overlay.appendChild(popup);
+  document.body.appendChild(overlay);
+
+  document.getElementById('close-cart').addEventListener('click', closeCartPopup);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeCartPopup();
+  });
+}
+
+function closeCartPopup() {
+  const overlay = document.querySelector('.cart-overlay');
+  if (overlay) document.body.removeChild(overlay);
+}
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  document.getElementById('cart-count').textContent = cart.length;
+  closeCartPopup();
+  showCart();
+}
+
+// Search and filter
+const searchInput = document.getElementById('search');
+searchInput.addEventListener('input', filterProducts);
+
+const filterButtons = document.querySelectorAll('.filter-btn');
+filterButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelector('.filter-btn.active').classList.remove('active');
+    btn.classList.add('active');
     filterProducts();
   });
 });
 
-// Sorting
-sortSelect.addEventListener("change", () => {
-  filterProducts();
-});
+document.getElementById('sort').addEventListener('change', filterProducts);
 
 function filterProducts() {
-  const searchTerm = searchBox.value.toLowerCase();
-  const category = document.querySelector(".filter-btn.active").dataset.category;
-  let filtered = products.filter(p =>
-    p.name.toLowerCase().includes(searchTerm) &&
-    (category === "All" || p.category === category)
+  const searchTerm = searchInput.value.toLowerCase();
+  const activeCategory = document.querySelector('.filter-btn.active').dataset.category;
+  const sortValue = document.getElementById('sort').value;
+
+  let filtered = products.filter(p => 
+    (activeCategory === 'All' || p.category === activeCategory) &&
+    p.name.toLowerCase().includes(searchTerm)
   );
-  if (sortSelect.value === "low-high") {
+
+  if (sortValue === 'low-high') {
     filtered.sort((a, b) => a.price - b.price);
-  } else if (sortSelect.value === "high-low") {
+  } else if (sortValue === 'high-low') {
     filtered.sort((a, b) => b.price - a.price);
   }
+
   displayProducts(filtered);
 }
-
-// Cart functions
-window.addToCart = function(index) {
-  cart.push(products[index]);
-  updateCartCount();
-  saveCart();
-};
-
-function updateCartCount() {
-  document.getElementById("cart-count").textContent = cart.length;
-}
-
-function saveCart() {
-  localStorage.setItem("cart", JSON.stringify(cart));
-}
-
-function loadCart() {
-  const stored = localStorage.getItem("cart");
-  if (stored) {
-    cart = JSON.parse(stored);
-    updateCartCount();
-  }
-}
-
-// Cart popup
-const cartButton = document.getElementById("cart-button");
-const cartPopup = document.getElementById("cart-popup");
-const closeCart = document.getElementById("close-cart");
-const cartItems = document.getElementById("cart-items");
-
-cartButton.addEventListener("click", () => {
-  cartItems.innerHTML = "";
-  cart.forEach((item, i) => {
-    const li = document.createElement("li");
-    li.textContent = `${item.name} - ₹${item.price}`;
-    const removeBtn = document.createElement("button");
-    removeBtn.textContent = "Remove";
-    removeBtn.onclick = () => removeFromCart(i);
-    li.appendChild(removeBtn);
-    cartItems.appendChild(li);
-  });
-  cartPopup.classList.remove("hidden");
-});
-
-closeCart.addEventListener("click", () => {
-  cartPopup.classList.add("hidden");
-});
-
-window.removeFromCart = function(index) {
-  cart.splice(index, 1);
-  updateCartCount();
-  saveCart();
-  document.getElementById("cart-button").click(); // refresh popup
-};
-
-// Theme toggle
-const themeToggle = document.getElementById("theme-toggle");
-themeToggle.addEventListener("click", () => {
-  document.body.classList.toggle("light-mode");
-});
