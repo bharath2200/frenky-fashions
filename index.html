@@ -1,37 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>FRENKY FASHIONS</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css"/>
 </head>
-<body>
+<body class="dark">
   <header>
     <div class="logo">
-      <img src="logo.png" alt="Frenky Fashions Logo">
       <h1>FRENKY FASHIONS</h1>
     </div>
-    <div class="header-actions">
+    <div class="header-right">
       <button id="theme-toggle">🌙</button>
       <a href="#">Account</a>
-      <button id="cart-button">Cart (<span id="cart-count">0</span>)</button>
+      <button id="cart-button">Cart (0)</button>
     </div>
   </header>
 
   <nav class="filters">
-    <button class="filter-btn active" data-category="All">All</button>
+    <button class="filter-btn active" data-category="all">All</button>
     <button class="filter-btn" data-category="Mens Shirts">Mens Shirts</button>
     <button class="filter-btn" data-category="T-Shirts">T-Shirts</button>
     <button class="filter-btn" data-category="Track Pants">Track Pants</button>
     <button class="filter-btn" data-category="Baggy Jeans">Baggy Jeans</button>
     <button class="filter-btn" data-category="New Arrivals">New Arrivals</button>
-
-    <input type="text" id="search" placeholder="Search products...">
+    <input type="text" id="search" placeholder="Search products..."/>
     <select id="sort">
       <option value="">Sort by</option>
-      <option value="low-high">Price: Low to High</option>
-      <option value="high-low">Price: High to Low</option>
+      <option value="asc">Price: Low to High</option>
+      <option value="desc">Price: High to Low</option>
     </select>
   </nav>
 
