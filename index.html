@@ -7,50 +7,47 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <header>
+    <div class="logo-section">
+      <img src="logo.png" alt="Frenky Logo" class="logo">
+      <h1>FRENKY FASHIONS</h1>
+    </div>
+    <div class="header-right">
+      <button id="theme-toggle">🌙</button>
+      <a href="#" class="account-link">Account</a>
+      <button id="cart-button">Cart (<span id="cart-count">0</span>)</button>
+    </div>
+  </header>
 
-<header>
-  <div class="header-left">
-    <img src="assets/logo.png" alt="Frenky Logo" class="logo">
-    <h1 class="site-name">FRENKY FASHIONS</h1>
+  <nav>
+    <button class="filter-btn active" data-category="All">All</button>
+    <button class="filter-btn" data-category="Mens Shirts">Mens Shirts</button>
+    <button class="filter-btn" data-category="T-Shirts">T-Shirts</button>
+    <button class="filter-btn" data-category="Track Pants">Track Pants</button>
+    <button class="filter-btn" data-category="Baggy Jeans">Baggy Jeans</button>
+    <button class="filter-btn" data-category="New Arrivals">New Arrivals</button>
+    <input type="text" id="search-box" placeholder="Search products...">
+    <select id="sort-products">
+      <option value="default">Sort by</option>
+      <option value="low-high">Price: Low to High</option>
+      <option value="high-low">Price: High to Low</option>
+    </select>
+  </nav>
+
+  <main id="product-list"></main>
+
+  <div id="cart-popup" class="hidden">
+    <div class="cart-content">
+      <h2>Your Cart</h2>
+      <ul id="cart-items"></ul>
+      <button id="close-cart">Close</button>
+    </div>
   </div>
-  <div class="header-right">
-    <button id="theme-toggle" title="Toggle Dark/Light">🌓</button>
-    <a href="#" class="header-link">Account</a>
-    <a href="#" id="cart-button" class="header-link">Cart (<span id="cart-count">0</span>)</a>
-  </div>
-</header>
 
-<nav>
-  <ul id="category-menu">
-    <li><a href="#" data-category="all">All</a></li>
-    <li><a href="#" data-category="Mens Shirts">Mens Shirts</a></li>
-    <li><a href="#" data-category="T-Shirts">T-Shirts</a></li>
-    <li><a href="#" data-category="Track Pants">Track Pants</a></li>
-    <li><a href="#" data-category="Baggy Jeans">Baggy Jeans</a></li>
-    <li><a href="#" data-category="New Arrivals">New Arrivals</a></li>
-  </ul>
-  <input type="text" id="search-bar" placeholder="Search products...">
-</nav>
+  <footer>
+    <p>© 2025 FRENKY FASHIONS — All Rights Reserved</p>
+  </footer>
 
-<main>
-  <section class="product-grid" id="product-grid">
-    <!-- Products will be loaded dynamically -->
-  </section>
-</main>
-
-<!-- Popup Cart -->
-<div id="cart-popup" class="cart-popup">
-  <div class="cart-content">
-    <h2>Your Cart</h2>
-    <ul id="cart-items"></ul>
-    <button id="close-cart">Close</button>
-  </div>
-</div>
-
-<footer>
-  <p>© 2025 FRENKY FASHIONS — All Rights Reserved</p>
-</footer>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
