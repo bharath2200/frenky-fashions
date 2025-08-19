@@ -6,34 +6,79 @@
   <title>FRENKY FASHIONS</title>
   <link rel="stylesheet" href="style.css"/>
 </head>
-<body class="dark">
-  <header>
-    <div class="logo">
-      <h1>FRENKY FASHIONS</h1>
+<body class="theme-dark">
+  <!-- Top Header -->
+  <header class="site-header">
+    <div class="header-left">
+      <img src="assets/logo.png" alt="Frenky Fashions Logo" class="logo">
+      <h1 class="brand">FRENKY FASHIONS</h1>
     </div>
+
     <div class="header-right">
-      <button id="theme-toggle">🌙</button>
-      <a href="#">Account</a>
-      <button id="cart-button">Cart (0)</button>
+      <input id="site-search" class="site-search" type="text" placeholder="Search products…" aria-label="Search" />
+      <button id="theme-toggle" class="icon-btn" title="Toggle theme">🌓</button>
+      <a href="#" class="header-link" title="Account">Account</a>
+      <button id="cart-button" class="icon-btn" title="Cart">Cart (<span id="cart-count">0</span>)</button>
     </div>
   </header>
 
-  <nav class="filters">
-    <button class="filter-btn active" data-category="all">All</button>
+  <!-- Category Nav -->
+  <nav class="main-nav">
+    <button class="filter-btn active" data-category="all">New Arrivals</button>
     <button class="filter-btn" data-category="Mens Shirts">Mens Shirts</button>
     <button class="filter-btn" data-category="T-Shirts">T-Shirts</button>
     <button class="filter-btn" data-category="Track Pants">Track Pants</button>
     <button class="filter-btn" data-category="Baggy Jeans">Baggy Jeans</button>
-    <button class="filter-btn" data-category="New Arrivals">New Arrivals</button>
-    <input type="text" id="search" placeholder="Search products..."/>
-    <select id="sort">
+
+    <select id="sort" class="sort-select" aria-label="Sort">
       <option value="">Sort by</option>
       <option value="asc">Price: Low to High</option>
       <option value="desc">Price: High to Low</option>
     </select>
   </nav>
 
-  <main id="product-list"></main>
+  <!-- Hero Slider -->
+  <section class="hero">
+    <div class="slider" id="hero-slider">
+      <div class="slide active">
+        <img src="assets/hero1.jpg" alt="New season arrivals">
+        <div class="caption">
+          <h2>New Season Arrivals</h2>
+          <p>Monochrome essentials for every day.</p>
+          <a href="#" class="cta">Shop Now</a>
+        </div>
+      </div>
+      <div class="slide">
+        <img src="assets/hero2.jpg" alt="Timeless Shirts">
+        <div class="caption">
+          <h2>Timeless Shirts</h2>
+          <p>Crisp whites & deep blacks.</p>
+          <a href="#" class="cta">Explore Shirts</a>
+        </div>
+      </div>
+      <div class="slide">
+        <img src="assets/hero3.jpg" alt="Streetwear Denim">
+        <div class="caption">
+          <h2>Streetwear Denim</h2>
+          <p>Relaxed fits. Premium fabric.</p>
+          <a href="#" class="cta">Shop Jeans</a>
+        </div>
+      </div>
+
+      <button class="hero-nav prev" aria-label="Previous slide">‹</button>
+      <button class="hero-nav next" aria-label="Next slide">›</button>
+      <div class="dots" id="hero-dots"></div>
+    </div>
+  </section>
+
+  <!-- Products -->
+  <main id="product-list" class="product-grid"></main>
+
+  <!-- Cart Modal (built dynamically) -->
+
+  <footer class="site-footer">
+    © 2025 FRENKY FASHIONS — All Rights Reserved
+  </footer>
 
   <script src="script.js"></script>
 </body>
