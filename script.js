@@ -1,107 +1,186 @@
+/* ----------------- STATE ----------------- */
 let products = [];
 let cart = [];
 
-// Fetch product data
-fetch("products.json")
-  .then(res => res.json())
-  .then(data => {
-    products = data;
-    displayProducts(products);
+/* ----------------- INIT ----------------- */
+document.addEventListener("DOMContentLoaded", () => {
+  // Theme
+  const savedTheme = localStorage.getItem("ff_theme");
+  if (savedTheme === "light") document.body.classList.replace("theme-dark", "theme-light");
+
+  // Load products
+  fetch("products.json")
+    .then(r => r.json())
+    .then(data => { products = data; renderProducts(products); restoreCart(); });
+
+  // Header controls
+  document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
+  document.getElementById("cart-button").addEventListener("click", openCart);
+
+  // Search (header)
+  document.getElementById("site-search").addEventListener("input", () => filterAndRender());
+
+  // Category filter
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      filterAndRender();
+    });
   });
 
-// Display products
-function displayProducts(items) {
-  const list = document.getElementById("product-list");
-  list.innerHTML = "";
-  items.forEach((p, index) => {
-    const card = document.createElement("div");
+  // Sort
+  document.getElementById("sort").addEventListener("change", filterAndRender);
+
+  // Hero slider
+  setupHeroSlider();
+});
+
+/* ----------------- THEME ----------------- */
+function toggleTheme() {
+  const isDark = document.body.classList.contains("theme-dark");
+  document.body.classList.toggle("theme-dark", !isDark);
+  document.body.classList.toggle("theme-light", isDark);
+  localStorage.setItem("ff_theme", isDark ? "light" : "dark");
+}
+
+/* ----------------- PRODUCTS RENDER ----------------- */
+function renderProducts(list) {
+  const wrap = document.getElementById("product-list");
+  wrap.innerHTML = "";
+  list.forEach((p, idx) => {
+    const card = document.createElement("article");
     card.className = "product-card";
     card.innerHTML = `
       <img src="${p.image}" alt="${p.name}">
       <h3>${p.name}</h3>
       <p>₹${p.price}</p>
-      <button onclick="addToCart(${index})">Add to Cart</button>
+      <button data-idx="${idx}" class="add-btn">Add to Cart</button>
     `;
-    list.appendChild(card);
+    wrap.appendChild(card);
+  });
+
+  wrap.querySelectorAll(".add-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const i = Number(e.currentTarget.dataset.idx);
+      addToCart(products[i]);
+    });
   });
 }
 
-// Add to cart
-function addToCart(index) {
-  cart.push(products[index]);
-  updateCartButton();
+function filterAndRender() {
+  const q = document.getElementById("site-search").value.trim().toLowerCase();
+  const activeBtn = document.querySelector(".filter-btn.active");
+  const category = activeBtn ? activeBtn.dataset.category : "all";
+  const sort = document.getElementById("sort").value;
+
+  let list = products.filter(p =>
+    (category === "all" || p.category === category) &&
+    (p.name.toLowerCase().includes(q))
+  );
+
+  if (sort === "asc") list.sort((a,b) => a.price - b.price);
+  if (sort === "desc") list.sort((a,b) => b.price - a.price);
+
+  renderProducts(list);
 }
 
-// Update cart button count
-function updateCartButton() {
-  document.getElementById("cart-button").innerText = `Cart (${cart.length})`;
-}
-
-// Filter buttons
-document.querySelectorAll(".filter-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    const category = btn.dataset.category;
-    const filtered = category === "all" ? products : products.filter(p => p.category === category);
-    displayProducts(filtered);
-  });
-});
-
-// Search bar
-document.getElementById("search").addEventListener("input", e => {
-  const term = e.target.value.toLowerCase();
-  const filtered = products.filter(p => p.name.toLowerCase().includes(term));
-  displayProducts(filtered);
-});
-
-// Sort dropdown
-document.getElementById("sort").addEventListener("change", e => {
-  const val = e.target.value;
-  let sorted = [...products];
-  if (val === "asc") sorted.sort((a, b) => a.price - b.price);
-  if (val === "desc") sorted.sort((a, b) => b.price - a.price);
-  displayProducts(sorted);
-});
-
-// Theme toggle
-document.getElementById("theme-toggle").addEventListener("click", () => {
-  document.body.classList.toggle("light");
-});
-
-// Cart popup
-document.getElementById("cart-button").addEventListener("click", showCart);
-
-function showCart() {
-  const overlay = document.createElement("div");
-  overlay.className = "cart-overlay";
-
-  const popup = document.createElement("div");
-  popup.className = "cart-popup";
-
-  popup.innerHTML = `
-    <h2>Your Cart</h2>
-    ${cart.length === 0 ? "<p>Cart is empty</p>" : ""}
-    ${cart.map((item, i) => `
-      <div class="cart-item">
-        <span>${item.name} - ₹${item.price}</span>
-        <button onclick="removeFromCart(${i})">Remove</button>
-      </div>
-    `).join('')}
-    <button id="close-cart">Close</button>
-  `;
-
-  overlay.appendChild(popup);
-  document.body.appendChild(overlay);
-
-  document.getElementById("close-cart").addEventListener("click", () => {
-    document.body.removeChild(overlay);
-  });
+/* ----------------- CART ----------------- */
+function addToCart(item) {
+  cart.push(item);
+  saveCart();
+  updateCartCount();
 }
 
 function removeFromCart(index) {
   cart.splice(index, 1);
-  updateCartButton();
-  document.querySelector(".cart-overlay").remove();
-  showCart(); // reopen updated cart
+  saveCart();
+  updateCartCount();
+  // Re-render cart if open
+  const overlay = document.querySelector(".cart-overlay");
+  if (overlay) { overlay.remove(); openCart(); }
+}
+
+function openCart() {
+  const overlay = document.createElement("div");
+  overlay.className = "cart-overlay";
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
+
+  const popup = document.createElement("div");
+  popup.className = "cart-popup";
+  popup.innerHTML = `
+    <h2>Your Cart</h2>
+    <div id="cart-lines">
+      ${cart.length ? "" : "<p>Your cart is empty.</p>"}
+      ${cart.map((c, i) => `
+        <div class="cart-line">
+          <span>${c.name}</span>
+          <span>₹${c.price}</span>
+          <button class="icon-btn" data-remove="${i}" title="Remove">✕</button>
+        </div>
+      `).join("")}
+    </div>
+    <div class="cart-actions">
+      <button class="secondary" id="close-cart">Close</button>
+      <button id="checkout">Checkout</button>
+    </div>
+  `;
+  overlay.appendChild(popup);
+  document.body.appendChild(overlay);
+
+  popup.querySelector("#close-cart").addEventListener("click", () => overlay.remove());
+  popup.querySelectorAll("[data-remove]").forEach(btn => {
+    btn.addEventListener("click", (e) => removeFromCart(Number(e.currentTarget.dataset.remove)));
+  });
+}
+
+function saveCart() {
+  localStorage.setItem("ff_cart", JSON.stringify(cart));
+}
+function restoreCart() {
+  const stored = localStorage.getItem("ff_cart");
+  if (stored) cart = JSON.parse(stored);
+  updateCartCount();
+}
+function updateCartCount() {
+  document.getElementById("cart-count").textContent = cart.length;
+}
+
+/* ----------------- HERO SLIDER ----------------- */
+function setupHeroSlider() {
+  const slider = document.getElementById("hero-slider");
+  const slides = [...slider.querySelectorAll(".slide")];
+  const dotsWrap = document.getElementById("hero-dots");
+  let i = 0, timer;
+
+  function go(n) {
+    slides[i].classList.remove("active");
+    i = (n + slides.length) % slides.length;
+    slides[i].classList.add("active");
+    updateDots();
+    restart();
+  }
+
+  function next() { go(i + 1); }
+  function prev() { go(i - 1); }
+
+  function updateDots() {
+    dotsWrap.innerHTML = slides.map((_, idx) =>
+      `<button class="${idx===i?'active':''}" data-goto="${idx}" aria-label="Go to slide ${idx+1}"></button>`
+    ).join("");
+    dotsWrap.querySelectorAll("[data-goto]").forEach(b =>
+      b.addEventListener("click", e => go(Number(e.currentTarget.dataset.goto)))
+    );
+  }
+
+  function restart() {
+    clearInterval(timer);
+    timer = setInterval(next, 5000);
+  }
+
+  slider.querySelector(".next").addEventListener("click", next);
+  slider.querySelector(".prev").addEventListener("click", prev);
+
+  updateDots();
+  restart();
 }
