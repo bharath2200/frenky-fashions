@@ -1,32 +1,32 @@
 [
   {
     "name": "Classic White Shirt",
-    "price": 999,
     "category": "Mens Shirts",
-    "image": "assets/product1.jpg"
+    "price": 999,
+    "image": "shirt1.jpg"
   },
   {
     "name": "Black Oversized Tee",
-    "price": 799,
     "category": "T-Shirts",
-    "image": "assets/product2.jpg"
+    "price": 799,
+    "image": "tshirt1.jpg"
   },
   {
     "name": "Grey Track Pants",
-    "price": 1199,
     "category": "Track Pants",
-    "image": "assets/product3.jpg"
+    "price": 1199,
+    "image": "trackpants1.jpg"
   },
   {
     "name": "Blue Baggy Jeans",
-    "price": 1499,
     "category": "Baggy Jeans",
-    "image": "assets/product4.jpg"
+    "price": 1499,
+    "image": "jeans1.jpg"
   },
   {
     "name": "Premium Hoodie",
-    "price": 1999,
     "category": "New Arrivals",
-    "image": "assets/product5.jpg"
+    "price": 1999,
+    "image": "hoodie1.jpg"
   }
 ]
