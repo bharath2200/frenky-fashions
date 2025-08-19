@@ -1,30 +1,25 @@
 let products = [];
 let cart = [];
 
-// Load products from JSON
-fetch('products.json')
+// Fetch product data
+fetch("products.json")
   .then(res => res.json())
   .then(data => {
     products = data;
     displayProducts(products);
   });
 
-// Theme toggle
-document.getElementById('theme-toggle').addEventListener('click', () => {
-  document.body.classList.toggle('light');
-});
-
 // Display products
 function displayProducts(items) {
-  const list = document.getElementById('product-list');
-  list.innerHTML = '';
-  items.forEach((product, index) => {
-    const card = document.createElement('div');
-    card.className = 'product-card';
+  const list = document.getElementById("product-list");
+  list.innerHTML = "";
+  items.forEach((p, index) => {
+    const card = document.createElement("div");
+    card.className = "product-card";
     card.innerHTML = `
-      <img src="${product.image}" alt="${product.name}">
-      <h3>${product.name}</h3>
-      <p>₹${product.price}</p>
+      <img src="${p.image}" alt="${p.name}">
+      <h3>${p.name}</h3>
+      <p>₹${p.price}</p>
       <button onclick="addToCart(${index})">Add to Cart</button>
     `;
     list.appendChild(card);
@@ -34,86 +29,79 @@ function displayProducts(items) {
 // Add to cart
 function addToCart(index) {
   cart.push(products[index]);
-  document.getElementById('cart-count').textContent = cart.length;
+  updateCartButton();
 }
 
-// Cart popup
-document.getElementById('cart-button').addEventListener('click', () => {
-  showCart();
+// Update cart button count
+function updateCartButton() {
+  document.getElementById("cart-button").innerText = `Cart (${cart.length})`;
+}
+
+// Filter buttons
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    const category = btn.dataset.category;
+    const filtered = category === "all" ? products : products.filter(p => p.category === category);
+    displayProducts(filtered);
+  });
 });
 
+// Search bar
+document.getElementById("search").addEventListener("input", e => {
+  const term = e.target.value.toLowerCase();
+  const filtered = products.filter(p => p.name.toLowerCase().includes(term));
+  displayProducts(filtered);
+});
+
+// Sort dropdown
+document.getElementById("sort").addEventListener("change", e => {
+  const val = e.target.value;
+  let sorted = [...products];
+  if (val === "asc") sorted.sort((a, b) => a.price - b.price);
+  if (val === "desc") sorted.sort((a, b) => b.price - a.price);
+  displayProducts(sorted);
+});
+
+// Theme toggle
+document.getElementById("theme-toggle").addEventListener("click", () => {
+  document.body.classList.toggle("light");
+});
+
+// Cart popup
+document.getElementById("cart-button").addEventListener("click", showCart);
+
 function showCart() {
-  const overlay = document.createElement('div');
-  overlay.className = 'cart-overlay';
-  
-  const popup = document.createElement('div');
-  popup.className = 'cart-popup';
+  const overlay = document.createElement("div");
+  overlay.className = "cart-overlay";
+
+  const popup = document.createElement("div");
+  popup.className = "cart-popup";
 
   popup.innerHTML = `
     <h2>Your Cart</h2>
-    ${cart.length === 0 
-      ? '<p>Cart is empty</p>'
-      : cart.map((item, i) => `
-          <div class="cart-item">
-            <span>${item.name} - ₹${item.price}</span>
-            <button onclick="removeFromCart(${i}); closeCartPopup()">Remove</button>
-          </div>
-        `).join('')
-    }
+    ${cart.length === 0 ? "<p>Cart is empty</p>" : ""}
+    ${cart.map((item, i) => `
+      <div class="cart-item">
+        <span>${item.name} - ₹${item.price}</span>
+        <button onclick="removeFromCart(${i})">Remove</button>
+      </div>
+    `).join('')}
     <button id="close-cart">Close</button>
   `;
-  
+
   overlay.appendChild(popup);
   document.body.appendChild(overlay);
 
-  document.getElementById('close-cart').addEventListener('click', closeCartPopup);
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) closeCartPopup();
+  document.getElementById("close-cart").addEventListener("click", () => {
+    document.body.removeChild(overlay);
   });
-}
-
-function closeCartPopup() {
-  const overlay = document.querySelector('.cart-overlay');
-  if (overlay) document.body.removeChild(overlay);
 }
 
 function removeFromCart(index) {
   cart.splice(index, 1);
-  document.getElementById('cart-count').textContent = cart.length;
-  closeCartPopup();
-  showCart();
-}
-
-// Search and filter
-const searchInput = document.getElementById('search');
-searchInput.addEventListener('input', filterProducts);
-
-const filterButtons = document.querySelectorAll('.filter-btn');
-filterButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelector('.filter-btn.active').classList.remove('active');
-    btn.classList.add('active');
-    filterProducts();
-  });
-});
-
-document.getElementById('sort').addEventListener('change', filterProducts);
-
-function filterProducts() {
-  const searchTerm = searchInput.value.toLowerCase();
-  const activeCategory = document.querySelector('.filter-btn.active').dataset.category;
-  const sortValue = document.getElementById('sort').value;
-
-  let filtered = products.filter(p => 
-    (activeCategory === 'All' || p.category === activeCategory) &&
-    p.name.toLowerCase().includes(searchTerm)
-  );
-
-  if (sortValue === 'low-high') {
-    filtered.sort((a, b) => a.price - b.price);
-  } else if (sortValue === 'high-low') {
-    filtered.sort((a, b) => b.price - a.price);
-  }
-
-  displayProducts(filtered);
+  updateCartButton();
+  document.querySelector(".cart-overlay").remove();
+  showCart(); // reopen updated cart
 }
