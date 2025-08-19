@@ -8,45 +8,34 @@
 </head>
 <body>
   <header>
-    <div class="logo-section">
-      <img src="logo.png" alt="Frenky Logo" class="logo">
+    <div class="logo">
+      <img src="logo.png" alt="Frenky Fashions Logo">
       <h1>FRENKY FASHIONS</h1>
     </div>
-    <div class="header-right">
+    <div class="header-actions">
       <button id="theme-toggle">🌙</button>
-      <a href="#" class="account-link">Account</a>
+      <a href="#">Account</a>
       <button id="cart-button">Cart (<span id="cart-count">0</span>)</button>
     </div>
   </header>
 
-  <nav>
+  <nav class="filters">
     <button class="filter-btn active" data-category="All">All</button>
     <button class="filter-btn" data-category="Mens Shirts">Mens Shirts</button>
     <button class="filter-btn" data-category="T-Shirts">T-Shirts</button>
     <button class="filter-btn" data-category="Track Pants">Track Pants</button>
     <button class="filter-btn" data-category="Baggy Jeans">Baggy Jeans</button>
     <button class="filter-btn" data-category="New Arrivals">New Arrivals</button>
-    <input type="text" id="search-box" placeholder="Search products...">
-    <select id="sort-products">
-      <option value="default">Sort by</option>
+
+    <input type="text" id="search" placeholder="Search products...">
+    <select id="sort">
+      <option value="">Sort by</option>
       <option value="low-high">Price: Low to High</option>
       <option value="high-low">Price: High to Low</option>
     </select>
   </nav>
 
   <main id="product-list"></main>
-
-  <div id="cart-popup" class="hidden">
-    <div class="cart-content">
-      <h2>Your Cart</h2>
-      <ul id="cart-items"></ul>
-      <button id="close-cart">Close</button>
-    </div>
-  </div>
-
-  <footer>
-    <p>© 2025 FRENKY FASHIONS — All Rights Reserved</p>
-  </footer>
 
   <script src="script.js"></script>
 </body>
